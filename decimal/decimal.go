@@ -1,6 +1,9 @@
 package decimal
 
-import "math"
+import (
+	"math"
+	"math/big"
+)
 
 // Decimal - number with arbitrary decimal precision
 //           defined to work exactly like the decimal type in .NET
@@ -185,7 +188,6 @@ func (dec *Decimal) AssignInt32(value int32) {
 	dec.lo = uint32(value)
 	dec.mid = 0
 	dec.hi = 0
-	dec.flags = 0
 }
 
 // AssignInt64 - assigns a uint32 to this decimal
@@ -218,4 +220,37 @@ func (dec *Decimal) Float64() float64 {
 	}
 
 	return result
+}
+
+// IsNeg - returns whether the decimal is a negative number
+func (dec *Decimal) IsNeg() bool {
+	return dec.flags&0x80000000 > 0
+}
+
+// Exp - returns exponent of this decimal
+func (dec *Decimal) Exp() uint8 {
+	return uint8((dec.flags & 0xFF0000) >> 16)
+}
+
+// String - get string representation of the decimal
+func (dec *Decimal) String() string {
+	number := big.Int{}
+	number.SetBytes([]byte{
+		byte(dec.hi >> 24), byte(dec.hi >> 16), byte(dec.hi >> 8), byte(dec.hi),
+		byte(dec.mid >> 24), byte(dec.mid >> 16), byte(dec.mid >> 8), byte(dec.mid),
+		byte(dec.lo >> 24), byte(dec.lo >> 16), byte(dec.lo >> 8), byte(dec.lo)})
+
+	numstr := number.String()
+	if dec.IsNeg() {
+		if dec.Exp() > 0 {
+			return "-" + numstr[:len(numstr)-int(dec.Exp())] + "." + numstr[dec.Exp()+1:]
+		}
+		return "-" + numstr
+	}
+
+	if dec.Exp() > 0 {
+		return numstr[:len(numstr)-int(dec.Exp())] + "." + numstr[dec.Exp()+1:]
+	}
+
+	return numstr
 }
