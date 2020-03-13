@@ -9,14 +9,14 @@ func toUInt32(data []byte) uint32 {
 }
 
 // ReadDecimal reads a .NET decimal number type
-func ReadDecimal(reader io.Reader) (*Decimal, error) {
+func ReadDecimal(reader io.Reader) (Decimal, error) {
 	buffer := make([]byte, 16)
 	_, err := io.ReadFull(reader, buffer)
 	if err != nil {
-		return nil, err
+		return Decimal{}, err
 	}
 
-	return &Decimal{
+	return Decimal{
 		lo:    toUInt32(buffer[0:4]),
 		mid:   toUInt32(buffer[4:8]),
 		hi:    toUInt32(buffer[8:12]),
@@ -24,7 +24,7 @@ func ReadDecimal(reader io.Reader) (*Decimal, error) {
 }
 
 // WriteDecimal writes a decimal value in .Net decimal format to the specified writer
-func WriteDecimal(writer io.Writer, dec *Decimal) error {
+func WriteDecimal(writer io.Writer, dec Decimal) error {
 	var buffer []byte = []byte{
 		byte(dec.lo & 0xFF), byte((dec.lo >> 8) & 0xFF), byte((dec.lo >> 16) & 0xFF), byte((dec.lo >> 24) & 0xFF),
 		byte(dec.mid & 0xFF), byte((dec.mid >> 8) & 0xFF), byte((dec.mid >> 16) & 0xFF), byte((dec.mid >> 24) & 0xFF),
