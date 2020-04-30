@@ -71,3 +71,25 @@ func TestToInt64NonFracNeg(t *testing.T) {
 	dec := FromInt64(-4545238794676)
 	require.Equal(t, int64(-4545238794676), dec.Int64())
 }
+
+func TestToInt32(t *testing.T) {
+	dec, err := FromFloat64(238794676.82347)
+	require.NoError(t, err)
+	require.Equal(t, int32(238794676), dec.Int32())
+}
+
+func TestToInt32NonFrac(t *testing.T) {
+	dec := FromInt64(238794676)
+	require.Equal(t, int32(238794676), dec.Int32())
+}
+
+func TestToInt32Neg(t *testing.T) {
+	dec, err := FromFloat64(-238794676.82347)
+	require.NoError(t, err)
+	require.Equal(t, int32(-238794676), dec.Int32())
+}
+
+func TestToInt32NonFracNeg(t *testing.T) {
+	dec := FromInt64(-238794676)
+	require.Equal(t, int32(-238794676), dec.Int32())
+}

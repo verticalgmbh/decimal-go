@@ -169,6 +169,24 @@ func (dec Decimal) Int64() int64 {
 	return value
 }
 
+// Int32 - get int32 value stored in decimal
+//         if value is a fractional value, only the non fractional
+//         part is returned
+func (dec Decimal) Int32() int32 {
+	value := (int64(dec.mid) << 32) | int64(dec.lo)
+	exp := dec.Exp()
+	for exp > 0 {
+		value /= 10
+		exp--
+	}
+
+	if dec.IsNeg() {
+		return -int32(value)
+	}
+
+	return int32(value)
+}
+
 // String - get string representation of the decimal
 func (dec Decimal) String() string {
 	number := big.Int{}
