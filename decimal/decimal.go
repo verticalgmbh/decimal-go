@@ -123,10 +123,6 @@ func FromFloat64(value float64) (Decimal, error) {
 		flags: flags}, nil
 }
 
-// AssignUInt64 - assigns a uint32 to this decimal
-func (dec Decimal) AssignUInt64(value uint64) {
-}
-
 // Float32 - converts the decimal to it's float32 representation
 func (dec Decimal) Float32() float32 {
 	return float32(dec.Float64())
@@ -153,6 +149,24 @@ func (dec Decimal) IsNeg() bool {
 // Exp - returns exponent of this decimal
 func (dec Decimal) Exp() uint8 {
 	return uint8((dec.flags & 0xFF0000) >> 16)
+}
+
+// Int64 - get int64 value stored in decimal
+//         if value is a fractional value, only the non fractional
+//         part is returned
+func (dec Decimal) Int64() int64 {
+	value := (int64(dec.mid) << 32) | int64(dec.lo)
+	exp := dec.Exp()
+	for exp > 0 {
+		value /= 10
+		exp--
+	}
+
+	if dec.IsNeg() {
+		return -value
+	}
+
+	return value
 }
 
 // String - get string representation of the decimal

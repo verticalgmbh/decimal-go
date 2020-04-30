@@ -49,3 +49,25 @@ func TestToStringNegBigFloat(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "-116767465441.67465441675", dec.String())
 }
+
+func TestToInt64(t *testing.T) {
+	dec, err := FromFloat64(4545238794676.82347)
+	require.NoError(t, err)
+	require.Equal(t, int64(4545238794676), dec.Int64())
+}
+
+func TestToInt64NonFrac(t *testing.T) {
+	dec := FromInt64(4545238794676)
+	require.Equal(t, int64(4545238794676), dec.Int64())
+}
+
+func TestToInt64Neg(t *testing.T) {
+	dec, err := FromFloat64(-4545238794676.82347)
+	require.NoError(t, err)
+	require.Equal(t, int64(-4545238794676), dec.Int64())
+}
+
+func TestToInt64NonFracNeg(t *testing.T) {
+	dec := FromInt64(-4545238794676)
+	require.Equal(t, int64(-4545238794676), dec.Int64())
+}
