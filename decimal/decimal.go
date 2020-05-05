@@ -1,6 +1,7 @@
 package decimal
 
 import (
+	"encoding/json"
 	"math"
 	"math/big"
 )
@@ -208,4 +209,28 @@ func (dec Decimal) String() string {
 	}
 
 	return numstr
+}
+
+// MarshalJSON - writes decimal number to a json structure
+func (dec Decimal) MarshalJSON() ([]byte, error) {
+	return json.Marshal(dec.Float64())
+}
+
+// UnmarshalJSON - reads a decimal number from a json structure
+func (dec *Decimal) UnmarshalJSON(data []byte) error {
+	v := 0.0
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+	d, err := FromFloat64(v)
+	if err != nil {
+		return err
+	}
+
+	dec.lo = d.lo
+	dec.mid = d.mid
+	dec.hi = d.hi
+	dec.flags = d.flags
+	return nil
 }
